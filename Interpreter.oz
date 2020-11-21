@@ -1,30 +1,31 @@
 \insert 'Unify.oz'
 
-% This function executes a given stack
-declare proc {Execute Stack}
+% This function ExecuteStacks a given stack
+declare proc {ExecuteStack Stack}
     {Browse Stack}
-    % if stack is empty execution is done
     case Stack of nil then skip
-    % if top of stack is nop simply pop it out
-    [] [nop]|Tail then 
-            {Execute Tail}
-    [] [var ident(X) S]|Tail then
-            local Xbind in
-                {Browse 0}
+    [] pairSE(s:S e:E)|StackT then
+        case S of nil then {ExecuteStack StackT}
+        [] [nop]|T then
+            {Browse 'Inside nop'}
+            {ExecuteStack pairSE(s:T e:E)|T}
+        [] [var ident(X) S]|T then
+            {Browse 'Inside ident(X)'}
+            local Xbind NewE in
                 Xbind = {CreateVariable}
-                {Browse 1}
-                {Execute S|Tail}
+                % TODO: Use Adjunction to get new environment from E.
+                % NewE = .....
+                {ExecuteStack pairSE(s:[S] e:NewE)|pairSE(s:T e:E)|StackT}
             end
+        [] [bind ident(X) ident(Y)]|T then
+            {Browse 'Inside bind ident(x) ident(y)'}
+            {Unify ident(X) ident(Y) E}
+            {ExecuteStack pairSE(s:T e:E)|StackT}
+        [] SList|T then % Handle nested statement
+            {ExecuteStack pairSE(s:SList e:E)|pairSE(s:T e:E)|StackT}
+        end
     end
 end
 
-declare proc {Debug C}
-  if C > @SASCounter then {Browse 'Done'} 
-  else {Browse {Dictionary.get SAStore C ?}} {Debug C+1} end
-end
-
-% {Execute [[nop] [nop] [nop]]}
-% {Browse X}
-% {Debug 1}
-{Execute [[var ident(x) [nop]]]}
-{Debug 0}
+Program = [[var ident(x) [var ident(y) [nop]]]]
+{ExecuteStack [pairSE(s:Program e:nil)]}

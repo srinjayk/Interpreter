@@ -26,7 +26,7 @@ proc {BindRefToKeyInSAS Key Ref}
     case {Dictionary.get SAStore Key} of
         unbound then {Dictionary.put SAStore Key ref(Ref)}
         [] ref(X) then {BindRefToKeyInSAS X Ref}
-        [] Value then {BindValueToKeyInSAS Ref Value}        
+        [] Value then {BindValueToKeyInSAS Ref Value}
     end
 end
 
