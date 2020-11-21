@@ -19,8 +19,6 @@ declare proc {ExecuteStack Stack}
             {Browse 'Inside ident(X)'}
             local NewE in
                 {Adjoin E X NewE}
-                % TODO: Use Adjunction to get new environment from E.
-                % NewE = .....
                 {ExecuteStack pairSE(s:[S] e:NewE)|pairSE(s:T e:E)|StackT}
             end
         [] [bind ident(X) ident(Y)]|T then
