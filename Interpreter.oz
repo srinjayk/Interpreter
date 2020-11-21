@@ -1,5 +1,11 @@
 \insert 'Unify.oz'
 
+declare proc {Adjoin OldE X NewE}
+    local Key in
+        Key = {CreateVariable}
+        {AdjoinAt OldE X Key NewE}
+    end
+end
 % This function ExecuteStacks a given stack
 declare proc {ExecuteStack Stack}
     {Browse Stack}
@@ -11,8 +17,8 @@ declare proc {ExecuteStack Stack}
             {ExecuteStack pairSE(s:T e:E)|T}
         [] [var ident(X) S]|T then
             {Browse 'Inside ident(X)'}
-            local Xbind NewE in
-                Xbind = {CreateVariable}
+            local NewE in
+                {Adjoin E X NewE}
                 % TODO: Use Adjunction to get new environment from E.
                 % NewE = .....
                 {ExecuteStack pairSE(s:[S] e:NewE)|pairSE(s:T e:E)|StackT}
