@@ -1,18 +1,4 @@
-% SAS = Single-Assignment Store is a dictionary
-declare SAStore SASCounter
-SAStore = {Dictionary.new}
-{NewCell 0 ?SASCounter}
-
-% Add a new variable to SAS
-% return its name
-declare fun {CreateVariable}
-    local C in
-        C = @SASCounter
-        SASCounter := @SASCounter + 1
-        {Dictionary.put SAStore C unbound}
-        C
-    end
-end
+\insert 'Unify.oz'
 
 % This function executes a given stack
 declare proc {Execute Stack}
@@ -32,13 +18,13 @@ declare proc {Execute Stack}
     end
 end
 
+declare proc {Debug C}
+  if C > @SASCounter then {Browse 'Done'} 
+  else {Browse {Dictionary.get SAStore C ?}} {Debug C+1} end
+end
+
 % {Execute [[nop] [nop] [nop]]}
 % {Browse X}
 % {Debug 1}
 {Execute [[var ident(x) [nop]]]}
 {Debug 0}
-
-declare proc {Debug 0}
-  if C > @SASCounter then {Browse 'Done'} 
-  else {Browse {Dictionary.get SAStore C ?}} {Debug C+1} end
-end
