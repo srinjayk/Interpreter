@@ -17,7 +17,7 @@ declare fun {ComputeClosure S E}
         end
     [] [bind ident(X) [procedure ArgList S1]] then
         local VarList VarListMapped in
-            VarList = {Map ArgList fun {$ A} case A.1 of ident(A1) then A1 else nil end end}
+            VarList = {Map ArgList fun {$ A} case A of ident(A1) then A1 else nil end end}
             VarListMapped = {Map VarList fun {$ A} A#unbound end}
             {Adjoin {Record.subtractList {ComputeClosure S1 {AdjoinList E VarListMapped}} VarList} env(X:E.X)}
         end
@@ -49,7 +49,7 @@ declare proc {ExecuteStack Stack}
             {ExecuteStack pairSE(s:T e:E)|StackT}
         [] [bind ident(X) [procedure ArgList S1]] then
             local VarList VarListMapped Closure in
-                VarList = {Map ArgList fun {$ A} case A.1 of ident(A1) then A1 else nil end end}
+                VarList = {Map ArgList fun {$ A} case A of ident(A1) then A1 else nil end end}
                 VarListMapped = {Map VarList fun {$ A} A#unbound end}
                 Closure = {ComputeClosure S1 {AdjoinList E VarListMapped}}
                 {Unify ident(X) procedure(ArgList S1 Closure) E}
