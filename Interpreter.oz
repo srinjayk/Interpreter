@@ -129,19 +129,35 @@ end
 %      %% Check
 %      [bind ident(baz) literal(f)]
 %      [nop]]]]]]
-Program = [[var ident(foo)
-                [var ident(bar)
-                    [var ident(quux)
-                        [[bind ident(bar) 
-                            [procedure [ident(baz)] [bind ident(baz) [record literal(person) [[literal(age) ident(foo)]] ] ] ]
+% Program = [[var ident(foo)
+%                 [var ident(bar)
+%                     [var ident(quux)
+%                         [[bind ident(bar) 
+%                             [procedure [ident(baz)] [bind ident(baz) [record literal(person) [[literal(age) ident(foo)]] ] ] ]
+%                         ]
+%             % [apply ident(bar) ident(quux)]
+%                         [bind ident(quux) [record literal(person) [[literal(age) literal(40)]]]]
+%                         [bind ident(foo) literal(42)]]
+%                     ]
+%                 ]
+%             ]
+%           ]
+
+Program = [
+            [var ident(a)
+                [var ident(b)
+                    [
+                        [bind ident(a) literal(3)]
+                        [bind ident(b) [
+                                procedure [ident(c)] [
+                                    [bind ident(c) ident(a)]
+                                ]
+                            ]
                         ]
-            % [apply ident(bar) ident(quux)]
-                        [bind ident(quux) [record literal(person) [[literal(age) literal(40)]]]]
-                        [bind ident(foo) literal(42)]]
+
                     ]
                 ]
             ]
-          ]
-
+        ]
 {ExecuteStack [pairSE(s:Program e:env())]}
 {Browse 'COMPLETED'}
