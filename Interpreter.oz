@@ -31,10 +31,10 @@ end
 declare proc {PatternMatchCreateE XFields PFields E NewE}
     case PFields of nil then NewE = E
     [] [literal(_) ident(HP)]|TP then
-        case XFields of [literal(_) ident(HX)]|TX then
+        case XFields of [literal(_) HX]|TX then
             local TempE in
                 {AdjoinAt E HP {CreateVariable} TempE}
-                {Unify ident(HP) ident(HX) TempE}
+                {Unify ident(HP) HX TempE}
                 {PatternMatchCreateE TX TP TempE NewE}
             end
         end
@@ -63,10 +63,11 @@ end
 
 % This function ExecuteStacks a given stack
 declare proc {ExecuteStack Stack}
-    {Browse Stack}
-    {Browse {Dictionary.entries SAStore}}
     case Stack of nil then skip
     [] pairSE(s:S e:E)|StackT then
+        {Browse 'Stack:'#Stack}
+        {Browse 'SAS:'#{Dictionary.entries SAStore}}
+        {Browse 'E:'#E}
         case S of nil then {ExecuteStack StackT}
         [] [nop]|T then
             {ExecuteStack pairSE(s:T e:E)|T}
@@ -94,7 +95,7 @@ declare proc {ExecuteStack Stack}
             end
         [] [match ident(X) P S1 S2]|T then
             local XVal in
-                XVal = {RetrieveFromSAS X}
+                XVal = {RetrieveFromSAS E.X}
                 case XVal of record|literal(_)|_|nil then
                     % P is a record. Check if records match:
                     local RecordsMatch NewE in
@@ -116,15 +117,18 @@ declare proc {ExecuteStack Stack}
     end
 end
 
-Program = [[var ident(x) 
-            [[var ident(y) 
-                [[bind ident(x) ident(y)]
-                [bind ident(y) [record literal('bruh') [[literal(firstname) literal('hello')]]]]
-            ]]
-            [var ident(z) [
-                [bind ident(x) [record literal('bruh') [[literal(firstname) ident(z)]]]]
-            ]]
-            ]
-        ]]
+Program = [[var ident(foo)
+  [var ident(bar)
+   [var ident(baz)
+    [[bind ident(foo) ident(bar)]
+     [bind ident(bar) literal(20)]
+     [match ident(foo) literal(21)
+      [bind ident(baz) literal(t)]
+      [bind ident(baz) literal(f)]]
+     %% Check
+     [bind ident(baz) literal(f)]
+     [nop]]]]]]
+        
 
 {ExecuteStack [pairSE(s:Program e:env())]}
+{Browse 'COMPLETED'}
