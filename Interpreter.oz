@@ -1,11 +1,9 @@
 \insert 'Unify.oz'
 
 declare fun {ComputeClosure S E}
-% NOTE: Possibly wrong. case statements should be similar to ExecuteStack since S by nature is a list of statements (at least 1-D).
-% Fixing above should also fix the "statement unreachable" errors that are present.
 % TODO: add [match ...] 
-    case S of H|T then 
-        {Adjoin {ComputeClosure H E} {ComputeClosure T E}}
+    case S of [nop] then
+        env()
     [] [var ident(X) S1] then
         {Record.subtract {ComputeClosure S1 {Adjoin env(X:unbound) E}} X}
     [] [bind ident(X) ident(Y)] then 
@@ -24,6 +22,8 @@ declare fun {ComputeClosure S E}
             VarListMapped = {Map VarList fun {$ A} A#unbound end}
             {Adjoin {Record.subtractList {ComputeClosure S1 {AdjoinList E VarListMapped}} VarList} env(X:E.X)}
         end
+    [] H|T then
+        {Adjoin {ComputeClosure H E} {ComputeClosure T E}}
     end
 end
 
