@@ -2,7 +2,8 @@
 
 declare fun {ComputeClosure S E}
 % TODO: add [match ...] 
-    case S of [nop] then
+    case S of nil then env() 
+    [] [nop] then
         env()
     [] [var ident(X) S1] then
         {Record.subtract {ComputeClosure S1 {Adjoin env(X:unbound) E}} X}
@@ -117,18 +118,30 @@ declare proc {ExecuteStack Stack}
     end
 end
 
+% Program = [[var ident(foo)
+%   [var ident(bar)
+%    [var ident(baz)
+%     [[bind ident(foo) ident(bar)]
+%      [bind ident(bar) literal(20)]
+%      [match ident(foo) literal(21)
+%       [bind ident(baz) literal(t)]
+%       [bind ident(baz) literal(f)]]
+%      %% Check
+%      [bind ident(baz) literal(f)]
+%      [nop]]]]]]
 Program = [[var ident(foo)
-  [var ident(bar)
-   [var ident(baz)
-    [[bind ident(foo) ident(bar)]
-     [bind ident(bar) literal(20)]
-     [match ident(foo) literal(21)
-      [bind ident(baz) literal(t)]
-      [bind ident(baz) literal(f)]]
-     %% Check
-     [bind ident(baz) literal(f)]
-     [nop]]]]]]
-        
+                [var ident(bar)
+                    [var ident(quux)
+                        [[bind ident(bar) 
+                            [procedure [ident(baz)] [bind ident(baz) [record literal(person) [[literal(age) ident(foo)]] ] ] ]
+                        ]
+            % [apply ident(bar) ident(quux)]
+                        [bind ident(quux) [record literal(person) [[literal(age) literal(40)]]]]
+                        [bind ident(foo) literal(42)]]
+                    ]
+                ]
+            ]
+          ]
 
 {ExecuteStack [pairSE(s:Program e:env())]}
 {Browse 'COMPLETED'}
