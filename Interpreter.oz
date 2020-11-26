@@ -23,6 +23,15 @@ declare fun {ComputeClosure S E}
             VarListMapped = {Map VarList fun {$ A} A#unbound end}
             {Adjoin {Record.subtractList {ComputeClosure S1 {AdjoinList E VarListMapped}} VarList} env(X:E.X)}
         end
+    [] [match ident(X) [record literal(_) Pairs] S1 S2] then
+        local VarList VarListMapped in
+            VarList = {Map Pairs fun {$ A} case A.2.1 of ident(A1) then A1 else nil end end}
+            VarListMapped = {Map VarList fun {$ A} A#unbound end}
+            {Adjoin
+                {Adjoin env(X:E.X) {Record.subtractList {ComputeClosure S1 {AdjoinList E VarListMapped}} VarList}}
+                {ComputeClosure S2 E}
+            }
+        end
     [] H|T then
         {Adjoin {ComputeClosure H E} {ComputeClosure T E}}
     end
