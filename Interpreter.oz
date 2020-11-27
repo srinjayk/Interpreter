@@ -1,7 +1,7 @@
 \insert 'Unify.oz'
 
 declare fun {ComputeClosure S E}
-% TODO: add [match ...] 
+% TODO: add [apply ...] 
     case S of nil then env() 
     [] [nop] then
         env()
@@ -37,6 +37,22 @@ declare fun {ComputeClosure S E}
     end
 end
 
+% Binds the Actual Arguments to Formal Arguments of a functions Contextual Environment
+declare fun {BindArgsInCE ArgsFormal ArgsActual E CE}
+    case ArgsFormal of nil then CE
+    [] ident(XFormal)|TFormal then
+        case ArgsActual of ident(XActual)|TActual then
+            {BindArgsInCE TFormal TActual E {Adjoin CE env(XFormal:E.XActual)}}
+        [] HActual|TActual then
+            local TempX in
+                TempX = {CreateVariable}
+                {BindValueToKeyInSAS TempX HActual}
+                {BindArgsInCE TFormal TActual E {Adjoin CE env(XFormal:TempX)}}
+            end
+        end
+    end
+end
+
 % Adds new bindings for pattern matching in E and binds the result to NewE.
 declare proc {PatternMatchCreateE XFields PFields E NewE}
     case PFields of nil then NewE = E
@@ -68,8 +84,10 @@ declare proc {CheckMatchAndGiveE XVal P E RecordsMatch NewE}
                 {PatternMatchCreateE XFields PFields E NewE}
             end
         end
-    end    
+    end
 end
+
+
 
 % This function ExecuteStacks a given stack
 declare proc {ExecuteStack Stack}
@@ -121,12 +139,21 @@ declare proc {ExecuteStack Stack}
                     {ExecuteStack pairSE(s:[S2] e:E)|pairSE(s:T e:E)|StackT}
                 end            
             end
+        [] (apply|ident(F)|ArgsActual)|T then
+            case {RetrieveFromSAS E.F}
+            of procedure(ArgsFormal FBody CE) then
+                % Check arguments length matchs
+                if {Length ArgsFormal} \= {Length ArgsActual} then {Raise argumentsDontMatch(F ArgsActual ArgsFormal )}
+                else
+                    {ExecuteStack pairSE(s:[FBody] e:{BindArgsInCE ArgsFormal ArgsActual E CE})|pairSE(s:T e:E)|StackT}
+                end
+            [] equivalence(_) then {Raise unbound(F)}
+            else {Raise notAProcedure(F)} end
         [] SList|T then % Handle nested statement
             {ExecuteStack pairSE(s:SList e:E)|pairSE(s:T e:E)|StackT}
         end
     end
 end
-
 % Program = [[var ident(foo)
 %   [var ident(bar)
 %    [var ident(baz)
@@ -138,35 +165,37 @@ end
 %      %% Check
 %      [bind ident(baz) literal(f)]
 %      [nop]]]]]]
-% Program = [[var ident(foo)
-%                 [var ident(bar)
-%                     [var ident(quux)
-%                         [[bind ident(bar) 
-%                             [procedure [ident(baz)] [bind ident(baz) [record literal(person) [[literal(age) ident(foo)]] ] ] ]
-%                         ]
-%             % [apply ident(bar) ident(quux)]
-%                         [bind ident(quux) [record literal(person) [[literal(age) literal(40)]]]]
-%                         [bind ident(foo) literal(42)]]
-%                     ]
-%                 ]
-%             ]
-%           ]
-
-Program = [
-            [var ident(a)
-                [var ident(b)
-                    [
-                        [bind ident(a) literal(3)]
-                        [bind ident(b) [
-                                procedure [ident(c)] [
-                                    [bind ident(c) ident(a)]
-                                ]
-                            ]
+Program = [[var ident(foo)
+                [var ident(bar)
+                    [var ident(quux)
+                        [[bind ident(bar) 
+                            [procedure [ident(baz)] [bind ident(baz) [record literal(person) [[literal(age) ident(foo)]] ] ] ]
                         ]
-
+                        [apply ident(bar) ident(quux)]
+                        [bind ident(quux) [record literal(person) [[literal(age) literal(40)]]]]
+                        % Next stmt must raise an exception since foo is bound to 40
+                        % [bind ident(foo) literal(42)]
+                        ]
                     ]
                 ]
             ]
-        ]
+          ]
+
+% Program = [
+%             [var ident(a)
+%                 [var ident(b)
+%                     [
+%                         [bind ident(a) literal(3)]
+%                         [bind ident(b) [
+%                                 procedure [ident(c)] [
+%                                     [bind ident(c) ident(a)]
+%                                 ]
+%                             ]
+%                         ]
+
+%                     ]
+%                 ]
+%             ]
+%         ]
 {ExecuteStack [pairSE(s:Program e:env())]}
 {Browse 'COMPLETED'}
