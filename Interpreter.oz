@@ -1,5 +1,11 @@
 \insert 'Unify.oz'
 
+declare fun {NotNil A}
+    case A of nil then false
+    else true
+    end
+end
+
 declare fun {ComputeClosure S E}
 % TODO: add [apply ...] 
     case S of nil then env() 
@@ -13,19 +19,19 @@ declare fun {ComputeClosure S E}
         env(X:E.X)
     [] [bind ident(X) [record literal(_) Pairs]] then
         local VarList VarListMapped in
-            VarList = {Map Pairs fun {$ A} case A.2.1 of ident(A1) then A1 else nil end end}
+            VarList = {Filter {Map Pairs fun {$ A} case A.2.1 of ident(A1) then A1 else nil end end} NotNil}
             VarListMapped = {Map VarList fun {$ A} A#E.A end}
             {AdjoinList env(X:E.X) VarListMapped}
         end
     [] [bind ident(X) [procedure ArgList S1]] then
         local VarList VarListMapped in
-            VarList = {Map ArgList fun {$ A} case A of ident(A1) then A1 else nil end end}
+            VarList = {Filter {Map ArgList fun {$ A} case A of ident(A1) then A1 else nil end end} NotNil}
             VarListMapped = {Map VarList fun {$ A} A#unbound end}
             {Adjoin {Record.subtractList {ComputeClosure S1 {AdjoinList E VarListMapped}} VarList} env(X:E.X)}
         end
     [] [match ident(X) [record literal(_) Pairs] S1 S2] then
         local VarList VarListMapped in
-            VarList = {Map Pairs fun {$ A} case A.2.1 of ident(A1) then A1 else nil end end}
+            VarList = {Filter {Map Pairs fun {$ A} case A.2.1 of ident(A1) then A1 else nil end end} NotNil}
             VarListMapped = {Map VarList fun {$ A} A#unbound end}
             {Adjoin
                 {Adjoin env(X:E.X) {Record.subtractList {ComputeClosure S1 {AdjoinList E VarListMapped}} VarList}}
@@ -34,7 +40,7 @@ declare fun {ComputeClosure S E}
         end
     [] (apply|ident(F)|ArgsActual) then
         local VarList VarListMapped in
-            VarList = {Map ArgsActual fun {$ A} case A of ident(A1) then A1 else nil end end}
+            VarList = {Filter {Map ArgsActual fun {$ A} case A of ident(A1) then A1 else nil end end} NotNil}
             VarListMapped = {Map VarList fun {$ A} A#E.A end}
             {AdjoinList env(F:E.F) VarListMapped}
         end
