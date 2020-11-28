@@ -34,7 +34,7 @@ declare fun {ComputeClosure S E}
         end
     [] (apply|ident(F)|ArgsActual) then
         local VarList VarListMapped in
-            VarList = {Map ArgsActual fun {$ A} case A.2.1 of ident(A1) then A1 else nil end end}
+            VarList = {Map ArgsActual fun {$ A} case A of ident(A1) then A1 else nil end end}
             VarListMapped = {Map VarList fun {$ A} A#E.A end}
             {AdjoinList env(F:E.F) VarListMapped}
         end
