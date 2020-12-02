@@ -91,17 +91,41 @@
 %                          [nop]]]]]]]
 
 %%%%%%%%%%%%%%%%%%%%%%% Test pattern matching (Q5)
-Q5match = [[var ident(foo)
-    [var ident(bar)
-        [var ident(baz)
-            [[bind ident(foo) ident(bar)]
-            [bind ident(bar) [record literal(bruh) [[literal(code) literal(21)]]]]
-            [match ident(foo) [record literal(bruh) [[literal(code) ident(bindedTo21)]]]
-                [bind ident(baz) ident(bindedTo21)] %If match successful
-                [bind ident(baz) literal(f)]]  %If match unsuccessful
-            [nop]
-            ]
-    ]]]]
+% local Foo in
+%     local Bar in
+%         local Baz in
+%             Foo = Bar
+%             Bar = bruh(code: 21)
+%             case Foo of bruh(code: BindedTo21) then
+%                 Baz = BindedTo21
+%             else Baz = 'f' end
+%         end
+%     end
+% end
 
-{ExecuteStack [pairSE(s:Q5match e:env())]}
+% Q5match = [[var ident(foo)
+%     [var ident(bar)
+%         [var ident(baz)
+%             [[bind ident(foo) ident(bar)]
+%             [bind ident(bar) [record literal(bruh) [[literal(code) literal(21)]]]]
+%             [match ident(foo) [record literal(bruh) [[literal(code) ident(bindedTo21)]]]
+%                 [bind ident(baz) ident(bindedTo21)] %If match successful
+%                 [bind ident(baz) literal(f)]]  %If match unsuccessful
+%             [nop]
+%             ]
+%     ]]]]
+
+% Q5notMatch = [[var ident(foo)
+%     [var ident(bar)
+%         [var ident(baz)
+%             [[bind ident(foo) ident(bar)]
+%             [bind ident(bar) [record literal(bruh) [[literal(code) literal(21)]]]]
+%             [match ident(foo) [record literal(bruh) [[literal(coder) ident(bindedTo21)]]]
+%                 [bind ident(baz) ident(bindedTo21)] %If match successful
+%                 [bind ident(baz) literal(f)]]  %If match unsuccessful
+%             [nop]
+%             ]
+%     ]]]]
+
+{ExecuteStack [pairSE(s:Q5notMatch e:env())]}
 {Browse 'COMPLETED'}
