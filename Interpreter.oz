@@ -1,11 +1,13 @@
 \insert 'Unify.oz'
 
+% Helper function to check if not nil.
 declare fun {NotNil A}
     case A of nil then false
     else true
     end
 end
 
+% Function to compute the closure of a function
 declare fun {ComputeClosure S E}
     case S of nil then env() 
     [] [nop] then
@@ -98,8 +100,6 @@ declare proc {CheckMatchAndGiveE XVal P E RecordsMatch NewE}
     end
 end
 
-
-
 % This function ExecuteStacks a given stack
 declare proc {ExecuteStack Stack}
     case Stack of nil then skip
@@ -167,5 +167,7 @@ declare proc {ExecuteStack Stack}
 end
 
 % Run the program as:
+% Program = [[nop]]
 % {ExecuteStack [pairSE(s:Program e:env())]}
 % {Browse 'COMPLETED'}
+% Check Tests.oz for testcases.
