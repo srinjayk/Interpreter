@@ -7,7 +7,6 @@ declare fun {NotNil A}
 end
 
 declare fun {ComputeClosure S E}
-% TODO: add [apply ...] 
     case S of nil then env() 
     [] [nop] then
         env()
@@ -166,48 +165,7 @@ declare proc {ExecuteStack Stack}
         end
     end
 end
-% Program = [[var ident(foo)
-%   [var ident(bar)
-%    [var ident(baz)
-%     [[bind ident(foo) ident(bar)]
-%      [bind ident(bar) literal(20)]
-%      [match ident(foo) literal(21)
-%       [bind ident(baz) literal(t)]
-%       [bind ident(baz) literal(f)]]
-%      %% Check
-%      [bind ident(baz) literal(f)]
-%      [nop]]]]]]
-Program = [[var ident(foo)
-                [var ident(bar)
-                    [var ident(quux)
-                        [[bind ident(bar) 
-                            [procedure [ident(baz)] [bind ident(baz) [record literal(person) [[literal(age) ident(foo)]] ] ] ]
-                        ]
-                        [apply ident(bar) ident(quux)]
-                        [bind ident(quux) [record literal(person) [[literal(age) literal(40)]]]]
-                        % Next stmt must raise an exception since foo is bound to 40
-                        % [bind ident(foo) literal(42)]
-                        ]
-                    ]
-                ]
-            ]
-          ]
 
-% Program = [
-%             [var ident(a)
-%                 [var ident(b)
-%                     [
-%                         [bind ident(a) literal(3)]
-%                         [bind ident(b) [
-%                                 procedure [ident(c)] [
-%                                     [bind ident(c) ident(a)]
-%                                 ]
-%                             ]
-%                         ]
-
-%                     ]
-%                 ]
-%             ]
-%         ]
-{ExecuteStack [pairSE(s:Program e:env())]}
-{Browse 'COMPLETED'}
+% Run the program as:
+% {ExecuteStack [pairSE(s:Program e:env())]}
+% {Browse 'COMPLETED'}
