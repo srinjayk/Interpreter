@@ -90,6 +90,18 @@
 %                          [apply ident(copy) ident(b) ident(a)]
 %                          [nop]]]]]]]
 
+%%%%%%%%%%%%%%%%%%%%%%% Test pattern matching (Q5)
+Q5match = [[var ident(foo)
+    [var ident(bar)
+        [var ident(baz)
+            [[bind ident(foo) ident(bar)]
+            [bind ident(bar) [record literal(bruh) [[literal(code) literal(21)]]]]
+            [match ident(foo) [record literal(bruh) [[literal(code) ident(bindedTo21)]]]
+                [bind ident(baz) ident(bindedTo21)] %If match successful
+                [bind ident(baz) literal(f)]]  %If match unsuccessful
+            [nop]
+            ]
+    ]]]]
 
-{ExecuteStack [pairSE(s:Q4c e:env())]}
+{ExecuteStack [pairSE(s:Q5match e:env())]}
 {Browse 'COMPLETED'}
