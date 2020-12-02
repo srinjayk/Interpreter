@@ -1,13 +1,13 @@
 \insert 'Interpreter.oz'
 
-%%%%%%%%%%%% Testing the stack (Question 1)
+% %%%%%%%%%%% Testing the stack (Question 1)
 % Q1 = [[nop] [nop] [nop] [nop]]
 
 % {ExecuteStack [pairSE(s:Q1 e:env())]}
 % {Browse 'COMPLETED'}
 
 
-%%%%%%%%%%%% Testing variable declaration (Question 2)
+%%%%%%%%%%% Testing variable declaration (Question 2)
 % local Foo in
 %     local Bar in
 %         local Goz in
@@ -68,5 +68,28 @@
 %             ]
 %         ]
 %     ]]
-% {ExecuteStack [pairSE(s:Q4 e:env())]}
-% {Browse 'COMPLETED'}
+
+%%%%%%%%%%%%%%% Testing Binding to a proc (Q4c).
+% local FreeVar Copy A B in
+%     proc {Copy X Y}
+%         X=Y
+%         X = FreeVar
+%     end
+%     {Copy B A}
+%     skip
+% end
+
+% Q4c = [[var ident(freeVar)
+%                 [var ident(copy)
+%                   [var ident(a)
+%                      [var ident(b)
+%                         [[bind ident(copy) [procedure [ident(x) ident(y)] [
+%                             [bind ident(x) ident(y)]
+%                             [bind ident(x) ident(freeVar)]
+%                         ]]]
+%                          [apply ident(copy) ident(b) ident(a)]
+%                          [nop]]]]]]]
+
+
+{ExecuteStack [pairSE(s:Q4c e:env())]}
+{Browse 'COMPLETED'}
