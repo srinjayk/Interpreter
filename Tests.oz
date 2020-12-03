@@ -183,7 +183,7 @@
 %     ]]
 
 
-%%%%%%%%%%%%% Testing Midsem Question 1
+%%%%%%%%%%%%% Testing Midsem Question 4
 % local X in
 %     local Foo in
 %         local X in
@@ -195,7 +195,7 @@
 %         {Foo X}
 %     end
 % end
-% Midsem1 = [[var ident(x)
+% Midsem4 = [[var ident(x)
 %                 [var ident(foo)
 %                      [[var ident(x)
 %                         [[bind ident(foo) [procedure [ident(y)] [bind ident(x) ident(y)]]]
@@ -205,5 +205,33 @@
 %             ]
 %         ]
 
-{ExecuteStack [pairSE(s:Midsem1 e:env())]}
+%%%%%%%%%%%%%%%% Testing Midsem Question 5
+% local Record H T X Y in
+%     Record = label(feature1:T feature2:H)
+%     H=1
+%     Y=2
+%     T=3
+%     case Record
+%         of label(feature1:H feature2:T) then X=H
+%         else X=T
+%     end
+% end
+
+% Midsem5 = [[var ident(record)
+%                 [var ident(h)
+%                     [var ident(t)
+%                         [var ident(x)
+%                             [var ident(y)
+%                                 [
+%                                     [bind ident(record) [record literal(label) 
+%                                         [[literal(feature1) ident(t)] [literal(feature2) ident(h)]]]]
+%                                         [bind ident(h) literal(1)]
+%                                         [bind ident(y) literal(2)]
+%                                         [bind ident(t) literal(3)]
+%                                 [match ident(record) [record literal(label)
+%                                     [[literal(feature1) ident(h)] [literal(feature2) ident(t)]]]
+%                                     [bind ident(x) ident(h)]
+%                                     [bind ident(x) ident(t)]]]]]]]]]
+
+{ExecuteStack [pairSE(s:Midsem5 e:env())]}
 {Browse 'COMPLETED'}
