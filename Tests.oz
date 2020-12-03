@@ -127,5 +127,32 @@
 %             ]
 %     ]]]]
 
-{ExecuteStack [pairSE(s:Q5notMatch e:env())]}
+%%%%%%%%%%%%%%%%%%%% Test Procedure application (Q6)
+% local Foo in
+%     local Bar in
+%         Bar = 20
+%         local Assign X in
+%                 X=3
+%             proc {Assign X Y}
+%                 X = Y
+%             end
+%            {Assign Foo Bar}
+%         end
+%     end
+% end
+% Q6 = [[ var ident(foo) [
+%             var ident(bar) [
+%                 [bind ident(bar) literal(20)]
+%                 [var ident(assign) [
+%                     [var ident(x) [
+%                         [bind ident(x) literal(3)]
+%                         [bind ident(assign) [procedure [ident(x) ident(y)] [bind ident(x) ident(y)]]]
+%                     ]]
+%                 [apply ident(assign) ident(foo) ident(bar)]
+%                 ]]
+%             ] 
+%         ]
+%     ]]
+
+{ExecuteStack [pairSE(s:Q6 e:env())]}
 {Browse 'COMPLETED'}
