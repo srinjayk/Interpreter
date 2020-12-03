@@ -154,5 +154,33 @@
 %         ]
 %     ]]
 
+%%%%%%%%%% Testing Nested procedure, apply and pattern match with free variables.
+% P = [[ var ident(foo) [
+%             var ident(bar) [
+%                 var ident(temp) [
+%                     [bind ident(bar) literal(20)]
+%                     [var ident(assign) [
+%                         [var ident(z) [
+%                             [bind ident(assign) 
+%                                 [procedure [ident(x) ident(y)] [
+%                                     [bind ident(z) [record literal(bruh) [[literal(code) literal(21)]]]]
+%                                     [match ident(z) [record literal(bruh) [[literal(code) ident(bindedTo21)]]]
+%                                         [bind ident(x) ident(y)]
+%                                         [bind ident(temp) literal(f)]]
+%                                     [var ident(assign1) [
+%                                         [bind ident(assign1) [procedure [ident(a)] [bind ident(a) ident(temp)] ]]
+%                                         [apply ident(assign1) ident(bar)]
+%                                     ]]
+%                             ]]]
+%                             ]
+%                         ]
+%                         [apply ident(assign) ident(foo) ident(bar)]
+%                         ]
+%                     ]
+%                 ]
+%             ] 
+%         ]
+%     ]]
+
 {ExecuteStack [pairSE(s:Q6 e:env())]}
 {Browse 'COMPLETED'}
