@@ -23,6 +23,6 @@ Implement [apply ident(f) ident(x1) ... ident(xn)] that applies a procedure stor
 
 
 Team Members
-- Abhyuday Pandey
-- Srinjay Kumar
-- Umang Malik
+- Abhyuday Pandey (170039)
+- Srinjay Kumar   (170722)
+- Umang Malik     (170765)
