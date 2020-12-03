@@ -182,5 +182,28 @@
 %         ]
 %     ]]
 
-{ExecuteStack [pairSE(s:Q6 e:env())]}
+
+%%%%%%%%%%%%% Testing Midsem Question 1
+% local X in
+%     local Foo in
+%         local X in
+%             proc {Foo Y}
+%                 X=Y
+%             end
+%             X = 2
+%         end
+%         {Foo X}
+%     end
+% end
+% Midsem1 = [[var ident(x)
+%                 [var ident(foo)
+%                      [[var ident(x)
+%                         [[bind ident(foo) [procedure [ident(y)] [bind ident(x) ident(y)]]]
+%                          [bind ident(x) literal(2)]]]
+%                      [apply ident(foo) ident(x)]]
+%                 ]
+%             ]
+%         ]
+
+{ExecuteStack [pairSE(s:Midsem1 e:env())]}
 {Browse 'COMPLETED'}
