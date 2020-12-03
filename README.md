@@ -26,3 +26,10 @@ Team Members
 - Abhyuday Pandey (170039)
 - Srinjay Kumar   (170722)
 - Umang Malik     (170765)
+
+Instructions
+- Extract all the files in the same folder.
+- To run any test case
+- Open tests.oz
+- Uncomment any part to run
+- Run the testcase as {ExecuteStack [pairSE(s:Testcase e:env())]} 
